@@ -175,33 +175,46 @@ map('n', '<leader>W', function()
   vim.notify('Line wrap ' .. (vim.wo.wrap and 'enabled' or 'disabled'))
 end, 'Toggle line wrap')
 
-map('n', '<Esc>', function()
+local function custom_escape()
   if vim.v.hlsearch == 1 then
-    vim.cmd.nohlsearch()
-  elseif bo.modifiable then
+    vim.cmd('nohlsearch')
+  elseif vim.bo.modifiable then
     utils.clear_lsp_references()
   elseif #vim.api.nvim_list_wins() > 1 then
-    return feedkeys('<C-w>c')
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-w>c', true, false, true), 'n', false)
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
   end
+  vim.cmd('close')
+end
 
-  vim.cmd.fclose({ bang = true })
-end, 'Close window if not modifiable, otherwise clear LSP references')
-map('t', '<Esc>', '<C-\\><C-n>')
+-- Map the custom escape function to <Esc> in normal mode
+vim.keymap.set('n', '<Esc>', custom_escape, { noremap = true, silent = true, desc = 'Close window if not modifiable, otherwise clear LSP references' })
 
+-- Map <Esc> in terminal mode to exit to normal mode
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true })
+
+-- Define clear screen function
 local function clear_screen()
   require('notify').dismiss() -- Dismiss all notifications on screen
-  feedkeys('<C-l>')
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-l>', true, false, true), 'n', false)
 end
-map('n', '<C-l>', clear_screen, { silent = true })
 
-map({ 'n', 'x' }, '<C-y>', '5<C-y>')
-map({ 'n', 'x' }, '<C-e>', '5<C-e>')
+-- Map the clear screen function to <C-l> in normal mode
+vim.keymap.set('n', '<C-l>', clear_screen, { noremap = true, silent = true })
 
-vim.api.nvim_create_augroup('CmdWinMaps', {})
+-- Map <C-y> and <C-e> to scroll by 5 lines in normal and visual mode
+vim.keymap.set({ 'n', 'x' }, '<C-y>', '5<C-y>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'x' }, '<C-e>', '5<C-e>', { noremap = true, silent = true })
+
+-- Create an augroup for command window mappings
+vim.api.nvim_create_augroup('CmdWinMaps', { clear = true })
+
+-- Create an autocmd for when entering the command window
 vim.api.nvim_create_autocmd('CmdwinEnter', {
   callback = function()
-    map('n', '<CR>', '<CR>', { buffer = true })
-    map('n', '<Esc>', '<C-w>c', { buffer = true })
+    vim.keymap.set('n', '<CR>', '<CR>', { buffer = true, noremap = true, silent = true })
+    vim.keymap.set('n', '<Esc>', '<C-w>c', { buffer = true, noremap = true, silent = true })
   end,
   group = 'CmdWinMaps'
 })

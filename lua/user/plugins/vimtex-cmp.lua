@@ -25,6 +25,6 @@ return {
         },
       },
     })
-    vim.keymap.set("i", "<leader>tes", function() require('cmp_vimtex.search').search_menu() end)
+    vim.keymap.set("n", "<leader>l<space>", function() require('cmp_vimtex.search').search_menu() end)
   end
 }
