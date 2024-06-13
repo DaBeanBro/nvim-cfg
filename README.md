@@ -1,2 +1,5 @@
 # nvim-cfg
-My Neovim Dotfiles 
+
+My Neovim Dotfiles
+
+# THIS IS A WIP
