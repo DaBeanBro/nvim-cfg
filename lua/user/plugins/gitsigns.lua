@@ -1,101 +1,79 @@
-return {
-  'lewis6991/gitsigns.nvim',
-  dependencies = 'tpope/vim-repeat',
-  event = 'VeryLazy',
-  config = function()
-    local utils = require('utils')
-    local map, feedkeys_count = utils.map, utils.feedkeys_count
-    local gitsigns = require('gitsigns')
-
-    gitsigns.setup({
-      signs = {
-        add = {
-          hl = "GitSignsAdd",
-          text = "│",
-          numhl = "GitSignsAddNr",
-          linehl = "GitSignsAddLn",
-        },
-        change = {
-          hl = "GitSignsChange",
-          text = "│",
-          numhl = "GitSignsChangeNr",
-          linehl = "GitSignsChangeLn",
-        },
-        delete = {
-          hl = "GitSignsDelete",
-          text = "_",
-          numhl = "GitSignsDeleteNr",
-          linehl = "GitSignsDeleteLn",
-        },
-        topdelete = {
-          hl = "GitSignsDelete",
-          text = "‾",
-          numhl = "GitSignsDeleteNr",
-          linehl = "GitSignsDeleteLn",
-        },
-        changedelete = {
-          hl = "GitSignsChange",
-          text = "~",
-          numhl = "GitSignsChangeNr",
-          linehl = "GitSignsChangeLn",
-        },
-      },
-      attach_to_untracked = false,
-      trouble = false,
-      on_attach = function()
-
-        local function git_blame()
-          gitsigns.blame_line({
-            full = true,
-            ignore_whitespace = true,
-          })
-        end
-
-        map({'n', 'x'}, '<leader>ghs', gitsigns.stage_hunk, 'Stage git hunk')
-        map({'n', 'x'}, '<leader>ghr', gitsigns.reset_hunk, 'Reset git hunk')
-
-        map('n', '<leader>ghS', gitsigns.stage_buffer,    'Stage entire buffer')
-        map('n', '<leader>ghR', gitsigns.reset_buffer,    'Reset entire buffer')
-        map('n', '<leader>ghu', gitsigns.undo_stage_hunk, 'Undo git hunk stage')
-        map('n', '<leader>ghp', gitsigns.preview_hunk,    'Preview git hunk')
-        map('n', 'gb',          git_blame,                'Git blame line')
-
-        local function next_hunk()
-          if vim.o.diff then
-            feedkeys_count(']c', 'n')
-          else
-            gitsigns.next_hunk()
-          end
-        end
-
-        local function prev_hunk()
-          if vim.o.diff then
-            feedkeys_count('[c', 'n')
-          else
-            gitsigns.prev_hunk()
-          end
-        end
-
-        -- Next/previous hunk
-        map({'n', 'x'}, ']g', next_hunk, 'Next git hunk')
-        map({'n', 'x'}, '[g', prev_hunk, 'Previous git hunk')
-
-        -- Text objects
-        map({'o', 'x'}, 'ih', gitsigns.select_hunk)
-        map({'o', 'x'}, 'ah', gitsigns.select_hunk)
-      end,
-    })
-
-    -- Workaround for bug where change highlight switches for some reason
-    vim.api.nvim_set_hl(0, 'GitGutterChange', { link = 'DiffChange' })
-    vim.opt.diffopt:append { 'algorithm:patience' } -- Use patience diff algorithm
-  end,
-  watch_gitdir = { interval = 1000, follow_files = true },
-  current_line_blame = true,
-  current_line_blame_opts = { delay = 1000, virtual_text_pos = "eol" },
-  sign_priority = 6,
-  update_debounce = 100,
-  status_formatter = nil, -- Use default
-  word_diff = false,
-  diff_opts = { internal = true },
+local M = {
+	"lewis6991/gitsigns.nvim",
+	event = "BufEnter",
+	cmd = "Gitsigns",
 }
+M.config = function()
+	local icons = require("utils.icons")
+
+	local wk = require("which-key")
+	wk.register({
+		["<leader>gj"] = { "<cmd>lua require 'gitsigns'.next_hunk({navigation_message = false})<cr>", "Next Hunk" },
+		["<leader>gk"] = { "<cmd>lua require 'gitsigns'.prev_hunk({navigation_message = false})<cr>", "Prev Hunk" },
+		["<leader>gp"] = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", "Preview Hunk" },
+		["<leader>gr"] = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", "Reset Hunk" },
+		["<leader>gl"] = { "<cmd>lua require 'gitsigns'.blame_line()<cr>", "Blame" },
+		["<leader>gR"] = { "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", "Reset Buffer" },
+		["<leader>gs"] = { "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", "Stage Hunk" },
+		["<leader>gu"] = {
+			"<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>",
+			"Undo Stage Hunk",
+		},
+		["<leader>gd"] = {
+			"<cmd>Gitsigns diffthis HEAD<cr>",
+			"Git Diff",
+		},
+	})
+
+	require("gitsigns").setup({
+		signs = {
+			add = {
+				hl = "GitSignsAdd",
+				text = icons.get("ui").BoldLineMiddle,
+				numhl = "GitSignsAddNr",
+				linehl = "GitSignsAddLn",
+			},
+			change = {
+				hl = "GitSignsChange",
+				text = icons.get("ui").BoldLineDashedMiddle,
+				numhl = "GitSignsChangeNr",
+				linehl = "GitSignsChangeLn",
+			},
+			delete = {
+				hl = "GitSignsDelete",
+				text = icons.get("ui").TriangleShortArrowRight,
+				numhl = "GitSignsDeleteNr",
+				linehl = "GitSignsDeleteLn",
+			},
+			topdelete = {
+				hl = "GitSignsDelete",
+				text = icons.get("ui").TriangleShortArrowRight,
+				numhl = "GitSignsDeleteNr",
+				linehl = "GitSignsDeleteLn",
+			},
+			changedelete = {
+				hl = "GitSignsChange",
+				text = icons.get("ui").BoldLineMiddle,
+				numhl = "GitSignsChangeNr",
+				linehl = "GitSignsChangeLn",
+			},
+		},
+		watch_gitdir = {
+			interval = 1000,
+			follow_files = true,
+		},
+		attach_to_untracked = true,
+		current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
+		update_debounce = 200,
+		max_file_length = 40000,
+		preview_config = {
+			border = "rounded",
+			style = "minimal",
+			relative = "cursor",
+			row = 0,
+			col = 1,
+		},
+	})
+end
+
+return M
