@@ -57,7 +57,7 @@ return {
           },
         },
         sorting_strategy = "ascending",
-        layout_strategy = "bottom_pane",
+        layout_strategy = "center",
         results_title = "",
         borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
         prompt_prefix = ":",
