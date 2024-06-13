@@ -27,9 +27,9 @@ return {
       -- { '+l',            fl.grep_dots,        mode = { 'n', 'x' } },
 
       -- all fzf-lua's builtin pickers work transparently with visual mode support
-      { '<c-b>', fl.buffers,          mode = { 'n', 'x' } },
-      { '<c-l>', fl.files,            mode = { 'n', 'x' } },
-      { '<c-n>', fl.live_grep_native, mode = { 'n', 'x' } },
+      -- { '<c-b>', fl.buffers,          mode = { 'n', 'x' } },
+      -- { '<c-l>', fl.files,            mode = { 'n', 'x' } },
+      -- { '<c-n>', fl.live_grep_native, mode = { 'n', 'x' } },
     },
     opts = {},
   },

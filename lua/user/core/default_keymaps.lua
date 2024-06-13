@@ -176,20 +176,21 @@ map('n', '<leader>W', function()
 end, 'Toggle line wrap')
 
 local function custom_escape()
-  if vim.v.hlsearch == 1 then
-    vim.cmd('nohlsearch')
-  elseif vim.bo.modifiable then
+  vim.cmd('nohlsearch')
+
+  if vim.bo.modifiable then
     utils.clear_lsp_references()
-  elseif #vim.api.nvim_list_wins() > 1 then
+  end
+
+  if #vim.api.nvim_list_wins() > 1 then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-w>c', true, false, true), 'n', false)
   else
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
   end
-  vim.cmd('close')
 end
 
 -- Map the custom escape function to <Esc> in normal mode
-vim.keymap.set('n', '<Esc>', custom_escape, { noremap = true, silent = true, desc = 'Close window if not modifiable, otherwise clear LSP references' })
+vim.keymap.set('n', '<Esc>', custom_escape, { noremap = true, silent = true })
 
 -- Map <Esc> in terminal mode to exit to normal mode
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true })
