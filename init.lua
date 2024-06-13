@@ -1,2 +1,2 @@
 -- Enjoy :3
-require "user.core"
+require("user.core")
