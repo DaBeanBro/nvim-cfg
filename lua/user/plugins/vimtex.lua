@@ -3,6 +3,7 @@ return {
   ft = {'tex', 'latex'},
   init = function()
     local g = vim.g
+    g.vimtex_syntax_enabled = false
     g.tex_indent_items = 0      -- Disable indent before new `\item`
     g.vimtex_indent_enabled = 0 -- Disable indent before new `\item` by VimTex
     g.tex_comment_nospell = 1
