@@ -1,6 +1,6 @@
 # nvim-cfg
 
 My Neovim Dotfiles, mainly used with Neovide.
-![Home](screenshots/Home.jpg)
+![Home](screenshots/home.jpg)
 
 # THIS IS A WIP
