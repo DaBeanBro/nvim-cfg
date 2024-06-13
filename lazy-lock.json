@@ -20,6 +20,7 @@
   "dressing.nvim": { "branch": "master", "commit": "e3714c8049b2243e792492c4149e4cc395c68eb9" },
   "dropbar.nvim": { "branch": "master", "commit": "3c8f53074bb7bf2faaa0020a36285024f7a902b8" },
   "edgy.nvim": { "branch": "main", "commit": "ab3f7121bd3da3c61166986fecc27c25b9469a09" },
+  "emmet-vim": { "branch": "master", "commit": "def5d57a1ae5afb1b96ebe83c4652d1c03640f4d" },
   "everblush": { "branch": "main", "commit": "9a0e695fdd57b340d3ba2b72406e3ca519029f25" },
   "everforest-nvim": { "branch": "main", "commit": "93ae58039f565ef51252e1177e00946bd6258228" },
   "flash.nvim": { "branch": "main", "commit": "43f67935d388fbb540f8b40e8cbfd80de54f978a" },
