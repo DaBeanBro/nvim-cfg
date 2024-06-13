@@ -1,5 +1,5 @@
 # nvim-cfg
 
-My Neovim Dotfiles
+My Neovim Dotfiles, mainly used with Neovide.
 
 # THIS IS A WIP

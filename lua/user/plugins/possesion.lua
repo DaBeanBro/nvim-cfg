@@ -13,12 +13,12 @@ return {
       logfile = false,
       prompt_no_cr = false,
       autosave = {
-        current = true,   -- or fun(name): boolean
-        cwd = true,       -- or fun(): boolean
-        tmp = true,       -- or fun(): boolean
+        current = false,   -- or fun(name): boolean
+        cwd = false,       -- or fun(): boolean
+        tmp = false,       -- or fun(): boolean
         tmp_name = 'tmp', -- or fun(): string
-        on_load = true,
-        on_quit = true,
+        on_load = false,
+        on_quit = false,
       },
       autoload = {
         cwd = false, -- or fun(): boolean
