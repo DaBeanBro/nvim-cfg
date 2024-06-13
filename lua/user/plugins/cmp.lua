@@ -23,6 +23,7 @@ return {
     dependencies = {
       -- Autocompletion plugin
       -- Completion Sources --
+      { "micangl/cmp-vimtex" }, -- nvim-cmp source for vimtex
       { "hrsh7th/cmp-nvim-lsp", lazy = true }, -- nvim-cmp source for neovim builtin LSP client
       { "hrsh7th/cmp-path",     lazy = true }, -- nvim-cmp source for path
       { "hrsh7th/cmp-buffer",   lazy = true }, -- nvim-cmp source for buffer words
@@ -134,6 +135,7 @@ return {
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
           { name = "buffer" },
+          { name = 'vimtex', },
           { name = "luasnip" },
           { name = "path" },
           { name = "nvim_lua" },
