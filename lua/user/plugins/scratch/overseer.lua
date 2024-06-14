@@ -1,11 +1,39 @@
+-- Function to restart the last overseer task
+local restart_last_task = function()
+	local overseer = require("overseer")
+	local tasks = overseer.list_tasks({ recent_first = true })
+	if vim.tbl_isempty(tasks) then
+		vim.notify("No tasks found", vim.log.levels.WARN)
+	else
+		overseer.run_action(tasks[1], "restart")
+	end
+end
+
 return {
 	"stevearc/overseer.nvim",
 	event = "VeryLazy",
+	enabled = true,
+	lazy = true,
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-telescope/telescope.nvim",
 		"rcarriga/nvim-notify",
 		"stevearc/dressing.nvim",
+	},
+	cmd = {
+		"OverseerOpen",
+		"OverseerClose",
+		"OverseerToggle",
+		"OverseerSaveBundle",
+		"OverseerLoadBundle",
+		"OverseerDeleteBundle",
+		"OverseerRunCmd",
+		"OverseerRun",
+		"OverseerInfo",
+		"OverseerBuild",
+		"OverseerQuickAction",
+		"OverseerTaskAction",
+		"OverseerClearCache",
 	},
 	keys = {
 		{ "<leader>tb", ":OverseerBuild<cr>", desc = "Build" },
@@ -13,11 +41,9 @@ return {
 		{ "<leader>ti", ":OverseerInfo<cr>", desc = "Info" },
 		{ "<leader>tq", ":OverseerQuickAction<cr>", desc = "Quick action" },
 		{ "<leader>tr", ":OverseerRun<cr>", desc = "Run" },
-		{ "<leader>td", ":OverseerRunCmd<cr>", desc = "Run Command" },
 		{ "<leader>tt", ":OverseerToggle<cr>", desc = "Toggle" },
 		{ "<leader>tw", ":WatchRun<cr>", desc = "Watch" },
 	},
-
 	opts = {
 		component_aliases = {
 			default = {
@@ -116,15 +142,34 @@ return {
 		},
 	},
 	config = function()
-		require("overseer").setup({
-			task_list = {
-				direction = "right",
-				default_detail = 2,
-			},
-		})
+		local overseer = require("overseer")
+		local files = require("overseer.files")
 
-		for _, ft_path in ipairs(vim.api.nvim_get_runtime_file("lua/tasks/*.lua", true)) do
-			loadfile(ft_path)()
+		if not require("utils").is_win() then
+			overseer.register_template({
+				name = "Shell script",
+				generator = function(opts, cb)
+					local scripts = vim.tbl_filter(function(filename)
+						return filename:match("%.sh$")
+					end, files.list_files(opts.dir))
+					local ret = {}
+					for _, filename in ipairs(scripts) do
+						table.insert(ret, {
+							name = "run " .. filename,
+							params = {
+								args = { optional = true, type = "list", delimiter = " " },
+							},
+							builder = function(params)
+								return {
+									cmd = { files.join(opts.dir, filename) },
+									args = params.args,
+								}
+							end,
+						})
+					end
+					cb(ret)
+				end,
+			})
 		end
 	end,
 }

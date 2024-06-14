@@ -1,5 +1,9 @@
 local M = {}
 
+M.is_win = function()
+	return vim.loop.os_uname().sysname == "Windows_NT"
+end
+
 ---runs :normal with bang
 ---@param cmdStr string
 function M.normal(cmdStr)
