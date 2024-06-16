@@ -1,6 +1,6 @@
 local settings = {}
 
-settings["colorscheme"] = "solarized-osaka"
+settings["colorscheme"] = "gruvbox"
 settings["background"] = "dark"
 
 return settings
