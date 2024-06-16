@@ -186,7 +186,8 @@ local function custom_escape()
 		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 	end
 
-	vim.api.nvim_command("set nohlsearch")
+	-- Set nohlsearch to clear search highlighting
+	vim.cmd("nohlsearch")
 end
 
 -- Map the custom escape function to <Esc> in normal mode
@@ -197,7 +198,7 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
 
 -- Define clear screen function
 local function clear_screen()
-	require("notify").dismiss() -- Dismiss all notifications on screen
+	require("user.plugins.notify").dismiss() -- Dismiss all notifications on screennpo
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-l>", true, false, true), "n", false)
 end
 

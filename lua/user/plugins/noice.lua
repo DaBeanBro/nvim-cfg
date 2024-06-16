@@ -82,14 +82,14 @@ return {
 			"nvim-lualine/lualine.nvim",
 		},
 		keys = {
-			{
-				"<Esc>",
-				function()
-					vim.snippet.stop()
-					vim.cmd.NoiceDismiss()
-				end,
-				desc = "󰎟 Clear Notifications & Snippet",
-			},
+			-- {
+			-- 	"<Esc>",
+			-- 	function()
+			-- 		vim.snippet.stop()
+			-- 		vim.cmd.NoiceDismiss()
+			-- 	end,
+			-- 	desc = "󰎟 Clear Notifications & Snippet",
+			-- },
 			{ "<D-0>", vim.cmd.NoiceHistory, mode = { "n", "x", "i" }, desc = "󰎟 Noice Log" },
 			{ "<D-9>", vim.cmd.NoiceLast, mode = { "n", "x", "i" }, desc = "󰎟 Noice Last" },
 		},
