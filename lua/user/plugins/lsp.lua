@@ -64,6 +64,25 @@ return {
 		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 		local servers = {
+			ltex = {
+				filetypes = { "markdown", "md", "tex", "text" },
+				flags = { debounce_text_changes = 300 },
+				settings = {
+					ltex = {
+						language = "en",
+						setenceCacheSize = 2000,
+						additionalRules = {
+							enablePickyRules = true,
+							motherTongue = "en",
+						},
+						trace = { server = "verbose" },
+						disabledRules = {},
+						hiddenFalsePositives = {},
+						username = "x@y.z",
+						apiKey = "tete",
+					},
+				},
+			},
 			lua_ls = {
 				on_init = function(client)
 					client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
