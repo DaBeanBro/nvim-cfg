@@ -10,7 +10,7 @@ return {
 			save_path = "~/Pictures",
 			has_breadcrumbs = true,
 			watermark = "",
-			bg_color = "#535c68",
+			bg_color = "#535c28",
 			title = "vraton.dev from CodeSnap.nvim",
 		})
 	end,
