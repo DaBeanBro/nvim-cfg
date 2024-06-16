@@ -27,6 +27,7 @@
   "flash.nvim": { "branch": "main", "commit": "43f67935d388fbb540f8b40e8cbfd80de54f978a" },
   "flatten.nvim": { "branch": "main", "commit": "e420e531d2ab24aebcf7b3c9fca28e6c5c34964d" },
   "floating-help.nvim": { "branch": "main", "commit": "1e61cb6804b7aac7fb0ccfdccbbd01a0a4c92241" },
+  "flutter-tools.nvim": { "branch": "main", "commit": "990a1349c29f7d474a0cd51355aba773ccc9deea" },
   "friendly-snippets": { "branch": "main", "commit": "700c4a25caacbb4648c9a27972c2fe203948e0c2" },
   "fzf-lua": { "branch": "main", "commit": "ad4d70b4658bcaad1e97c7879b32980c5244150c" },
   "fzf-lua-overlay": { "branch": "master", "commit": "4120359e1158df01cdac094dc7710dea2b000bd9" },
