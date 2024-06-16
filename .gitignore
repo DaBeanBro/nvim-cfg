@@ -11,8 +11,7 @@ plugged/
 pack/*/start/
 
 # Undo files and session
-undodir/
-Session.vim
+undo/
 
 # OS specific
 .DS_Store
@@ -22,7 +21,7 @@ Thumbs.db
 tags
 
 # Backup files
-backup/
+backup*/
 
 # Other
 noice.log
