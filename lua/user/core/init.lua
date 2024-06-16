@@ -27,7 +27,7 @@ local function neovide_config()
 			neovide_no_idle = true,
 			neovide_show_border = true,
 			neovide_refresh_rate = 120,
-			neovide_cursor_vfx_mode = "Torpedo",
+			neovide_cursor_vfx_mode = "torpedo",
 			neovide_cursor_vfx_opacity = 200.0,
 			neovide_cursor_antialiasing = true,
 			neovide_cursor_trail_length = 0.05,
