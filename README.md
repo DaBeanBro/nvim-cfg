@@ -1,10 +1,9 @@
 # nvim-cfg
 
-My Neovim Dotfiles, mainly used with Neovide.
-![Home](screenshots/home.jpg)
-![Example](screenshots/example.jpg)
-![Cmp](screenshots/cmp.jpg)
-![Diag](screenshots/diag.jpg)
+My Neovim Dotfiles, mainly used with alacritty and tmux.
+Contact me @ dabeanbro on discord.
+
+![Home](screenshots/home.png)
 
 # THIS IS A WIP
 
