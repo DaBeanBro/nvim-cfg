@@ -23,3 +23,8 @@ tags
 
 # Backup files
 backup/
+
+# Other
+noice.log
+lazy_lock.json
+/lua/user/plugins/scratch/
