@@ -1,127 +1,69 @@
 return {
 	"neovim/nvim-lspconfig",
-	enabled = true,
 	dependencies = {
-		"williamboman/mason.nvim", -- For installing LSP servers
-		"williamboman/mason-lspconfig.nvim", -- Integration with nvim-lspconfig
-		"b0o/schemastore.nvim", -- YAML/JSON schemas
-		"jose-elias-alvarez/typescript.nvim", -- TypeScript utilities
-		"davidosomething/format-ts-errors.nvim", -- Prettier TypeScript errors
-		"hrsh7th/cmp-nvim-lsp", -- Improved LSP capabilities
-		"lvimuser/lsp-inlayhints.nvim", -- Inlay hints
-		{ "nvim-telescope/telescope.nvim", dependencies = "nvim-lua/plenary.nvim" },
+		{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
+		"williamboman/mason-lspconfig.nvim",
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+
+		-- Useful status updates for LSP.
+		-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+		{ "j-hui/fidget.nvim", opts = {} },
 	},
-	event = { "VeryLazy", "BufWrite" },
 	config = function()
-		local api, lsp, diagnostic = vim.api, vim.lsp, vim.diagnostic
-		local lspconfig = require("lspconfig")
-		local telescope = require("telescope.builtin")
 		local mason_path = require("mason-core.path")
-		local typescript = require("typescript")
 		local get_install_path = require("utils").get_install_path
 
-		local function map(modes, lhs, rhs, opts)
-			if type(opts) == "string" then
-				opts = { desc = opts }
-			elseif not opts then
-				opts = {}
-			end
-			opts = vim.tbl_extend("keep", opts, { buffer = true })
-			require("utils").map(modes, lhs, rhs, opts)
-		end
+		vim.api.nvim_create_autocmd("LspAttach", {
+			group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
+			callback = function(event)
+				local map = function(keys, func, desc)
+					vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+				end
+				map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+				map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+				map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+				map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+				map("<leader>fs", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+				map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+				map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+				map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+				map("K", vim.lsp.buf.hover, "Hover Documentation")
+				map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+				local client = vim.lsp.get_client_by_id(event.data.client_id)
+				if client and client.server_capabilities.documentHighlightProvider then
+					local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+						buffer = event.buf,
+						group = highlight_augroup,
+						callback = vim.lsp.buf.document_highlight,
+					})
 
-		local function map_vsplit(lhs, fn, description)
-			vim.keymap.set("n", lhs, function()
-				require("telescope.builtin")[fn]({ jump_type = "vsplit" })
-			end, { desc = description })
-		end
+					vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+						buffer = event.buf,
+						group = highlight_augroup,
+						callback = vim.lsp.buf.clear_references,
+					})
 
-		local function typescript_organize_imports()
-			local params = {
-				command = "_typescript.organizeImports",
-				arguments = { vim.api.nvim_buf_get_name(0) },
-				title = "Organize imports",
-			}
-			vim.lsp.buf.execute_command(params)
-		end
-
-		-- TypeScript server configuration
-		local tsserver_config = {
-			on_attach = function()
-				local actions = typescript.actions
-
-				local function spread(char)
-					return function()
-						require("utils").feedkeys("siw" .. char .. "a...<Esc>2%i, ", "m")
-					end
+					vim.api.nvim_create_autocmd("LspDetach", {
+						group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+						callback = function(event2)
+							vim.lsp.buf.clear_references()
+							vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
+						end,
+					})
 				end
 
-				local function rename_file()
-					local workspace_path = lsp.buf.list_workspace_folders()[1]
-					local file_path = vim.fn.expand("%:" .. workspace_path .. ":.")
-					vim.ui.input({ prompt = "Rename file", default = file_path }, function(target)
-						if target then
-							typescript.renameFile(file_path, target)
-						end
-					end)
+				if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+					map("<leader>th", function()
+						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+					end, "[T]oggle Inlay [H]ints")
 				end
-
-				map("n", "<leader>lo", "<cmd>TypescriptOrganizeAndFixImports<CR>", "LSP Organize imports")
-				map("n", "<leader>li", actions.addMissingImports, "LSP add missing imports")
-				map("n", "<leader>lf", actions.fixAll, "LSP fix all errors")
-				map("n", "<leader>lu", actions.removeUnused, "LSP remove unused")
-				map("n", "<leader>lr", rename_file, "LSP rename file")
-				map("n", "<leader>lc", function()
-					require("tsc").run()
-				end, "Type check project")
-				map("n", "<leader>ls", spread("{"), { remap = true, desc = "Spread object under cursor" })
-				map("n", "<leader>lS", spread("["), { remap = true, desc = "Spread array under cursor" })
 			end,
-			commands = {
-				TypescriptOrganizeAndFixImports = {
-					typescript_organize_imports,
-					description = "Organize imports",
-				},
-			},
-			settings = {
-				typescript = {
-					inlayHints = {
-						includeInlayParameterNameHints = "all",
-						includeInlayPropertyDeclarationTypeHints = true,
-						includeInlayEnumMemberValueHints = true,
-						includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-						includeInlayFunctionParameterTypeHints = false,
-						includeInlayVariableTypeHints = false,
-						includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-						includeInlayFunctionLikeReturnTypeHints = false,
-					},
-				},
-			},
-			handlers = {
-				["textDocument/publishDiagnostics"] = function(_, result, ctx, config)
-					if not result.diagnostics then
-						return
-					end
+		})
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-					local idx = 1
-					while idx <= #result.diagnostics do
-						local entry = result.diagnostics[idx]
-						local formatter = require("format-ts-errors")[entry.code]
-						entry.message = formatter and formatter(entry.message) or entry.message
-						if entry.code == 80001 then
-							table.remove(result.diagnostics, idx)
-						else
-							idx = idx + 1
-						end
-					end
-
-					lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
-				end,
-			},
-		}
-
-		-- Server configurations
-		local server_configs = {
+		local servers = {
 			lua_ls = {
 				on_init = function(client)
 					client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
@@ -146,9 +88,7 @@ return {
 					client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
 					return true
 				end,
-				on_attach = function()
-					map("n", "<leader>lt", "<Plug>PlenaryTestFile", "Run file's plenary tests")
-				end,
+				on_attach = function() end,
 			},
 			yamlls = {
 				settings = {
@@ -172,7 +112,7 @@ return {
 			},
 			eslint = {
 				on_attach = function(_, bufnr)
-					api.nvim_create_autocmd("BufWritePre", {
+					vim.api.nvim_create_autocmd("BufWritePre", {
 						buffer = bufnr,
 						command = "EslintFixAll",
 					})
@@ -186,16 +126,13 @@ return {
 			jsonls = {
 				settings = {
 					json = {
-						schemas = require("schemastore").json.schemas(),
 						validate = { enable = true },
 					},
 				},
 			},
 			bicep = { cmd = { mason_path.concat({ get_install_path("bicep-lsp"), "bicep-lsp" }) } },
 			typst_lsp = {
-				on_attach = function()
-					map("n", "<leader>lw", "<cmd>TypstWatch<CR>", "Watch file")
-				end,
+				on_attach = function() end,
 			},
 			typos_lsp = {
 				on_attach = function(client, _)
@@ -227,103 +164,22 @@ return {
 			},
 		}
 
-		local disable = function() end
-		local special_server_configs = {
-			tsserver = function()
-				typescript.setup({ server = tsserver_config })
-			end,
-			zk = disable,
-			rust_analyzer = disable,
-			jdtls = disable,
-			ltex = disable,
-			gopls = disable,
-		}
+		require("mason").setup()
 
-		local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-		-- Set up servers
-		local function setup(server_name)
-			local special_server_setup = special_server_configs[server_name]
-			if special_server_setup then
-				special_server_setup()
-				return
-			end
-
-			local opts = server_configs[server_name] or {}
-			local opts_with_capabilities = vim.tbl_deep_extend("force", opts, { capabilities = capabilities })
-			lspconfig[server_name].setup(opts_with_capabilities)
-		end
-
-		local ensure_installed = vim.list_extend(vim.tbl_keys(server_configs), vim.tbl_keys(special_server_configs))
+		local ensure_installed = vim.tbl_keys(servers or {})
+		vim.list_extend(ensure_installed, {
+			"stylua",
+		})
+		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 		require("mason-lspconfig").setup({
-			handlers = { setup },
-			ensure_installed = ensure_installed,
-		})
-
-		-- Mason setup
-		require("mason").setup({
-			ui = {
-				icons = {
-					package_installed = "✓",
-					package_pending = "➜",
-					package_uninstalled = "✗",
-				},
+			handlers = {
+				function(server_name)
+					local server = servers[server_name] or {}
+					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+					require("lspconfig")[server_name].setup(server)
+				end,
 			},
 		})
-
-		-- Enable LSP inlay hints
-		require("lsp-inlayhints").setup()
-
-		-- Custom diagnostic settings
-		diagnostic.config({
-			virtual_text = false,
-			signs = true,
-			update_in_insert = true,
-			underline = true,
-			severity_sort = true,
-			float = {
-				focusable = false,
-				style = "minimal",
-				border = "rounded",
-				source = "if_many",
-				header = "",
-				prefix = "",
-			},
-		})
-
-		-- Custom keymaps for LSP functionality
-		map("n", "gd", function()
-			telescope.lsp_definitions()
-		end, "Goto definition")
-		map("n", "gD", lsp.buf.declaration, "Goto declaration")
-		map("n", "gi", function()
-			telescope.lsp_implementations()
-		end, "Goto implementation")
-		map("n", "go", function()
-			telescope.lsp_type_definitions()
-		end, "Goto type definition")
-		map("n", "gr", function()
-			telescope.lsp_references()
-		end, "Goto references")
-		map("n", "K", lsp.buf.hover, "Hover documentation")
-		map("n", "<C-k>", lsp.buf.signature_help, "Signature help")
-		map("n", "<leader>lr", lsp.buf.rename, "Rename symbol")
-		map("n", "<leader>la", lsp.buf.code_action, "Code action")
-		map("n", "<leader>ld", function()
-			diagnostic.open_float()
-		end, "Show diagnostics")
-		map("n", "[d", function()
-			diagnostic.goto_prev()
-		end, "Previous diagnostic")
-		map("n", "]d", function()
-			diagnostic.goto_next()
-		end, "Next diagnostic")
-
-		-- Additional keymaps for file-specific operations
-		map_vsplit("<leader>lv", "lsp_definitions", "Goto definition in vsplit")
-		map_vsplit("<leader>lt", "lsp_type_definitions", "Goto type definition in vsplit")
-		map_vsplit("<leader>li", "lsp_implementations", "Goto implementation in vsplit")
-		map_vsplit("<leader>lr", "lsp_references", "Goto references in vsplit")
 	end,
 }
