@@ -116,6 +116,6 @@ return {
 		vim.keymap.set("n", "<leader>ff", builtin.commands, { desc = "Commands" })
 		vim.keymap.set("n", "<leader>gf", builtin.git_commits, { desc = "Git Commits" })
 
-		vim.keymap.set("n", "<leader>sf", ":Telescope possession list<CR>", { desc = "List Sessions" })
+		-- vim.keymap.set("n", "<leader>sf", ":Telescope possession list<CR>", { desc = "List Sessions" })
 	end,
 }

@@ -1,6 +1,9 @@
-return {
-	on_init = function(client)
-		client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
+return function(on_attach)
+	return {
+		on_attach = function(client, bufnr)
+			on_attach(client, bufnr)
+		end,
+		settings = {
 			Lua = {
 				completion = { callSnippet = "Replace", autoRequire = true },
 				format = {
@@ -18,9 +21,6 @@ return {
 				telemetry = { enable = false },
 				filetypes = "lua",
 			},
-		})
-
-		client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
-		return true
-	end,
-}
+		},
+	}
+end

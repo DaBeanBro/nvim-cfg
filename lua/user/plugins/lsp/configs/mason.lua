@@ -20,9 +20,9 @@ return {
 			local mason = require("mason")
 			-- local path = require "mason-core.path"
 			local mason_lspconfig = require("mason-lspconfig")
-			local on_attach = require("user.plugins.lsp.opts").on_attach
-			local on_init = require("user.plugins.lsp.opts").on_init
-			local capabilities = require("user.plugins.lsp.opts").capabilities
+			local on_attach = require("user.plugins.lsp.configs.lspconfig").on_attach
+			local on_init = require("user.plugins.lsp.configs.lspconfig").on_init
+			local capabilities = require("user.plugins.lsp.configs.lspconfig").capabilities
 
 			mason.setup({
 				ui = {
@@ -84,7 +84,8 @@ return {
 			local disabled_servers = {
 				"jdtls",
 				"rust_analyzer",
-				"tsserver",
+				"typos-lsp",
+				-- "tsserver",
 			}
 
 			mason_lspconfig.setup_handlers({
@@ -100,11 +101,6 @@ return {
 						on_init = on_init,
 						capabilities = capabilities,
 					}
-
-					local require_ok, server = pcall(require, "user.plugins.lsp.settings." .. server_name)
-					if require_ok then
-						opts = vim.tbl_deep_extend("force", server, opts)
-					end
 
 					require("lspconfig")[server_name].setup(opts)
 				end,
