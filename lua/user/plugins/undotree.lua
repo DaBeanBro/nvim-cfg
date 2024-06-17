@@ -1,5 +1,6 @@
 return {
 	"mbbill/undotree",
+	event = "VimEnter",
 	enabled = true,
 	lazy = true,
 	cmd = {

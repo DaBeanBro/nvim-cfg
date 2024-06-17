@@ -1,6 +1,7 @@
 return {
 	"folke/zen-mode.nvim",
 	cmd = "ZenMode",
+	event = "VimEnter",
 	config = function()
 		local settings = require("user.core.settings")
 		require("zen-mode").setup({
@@ -71,6 +72,6 @@ return {
 			end,
 		})
 
-		vim.keymap.set("n", "Zt", "<cmd>ZenMode<CR>", { desc = "zenmode" })
+		vim.keymap.set("n", "zt", "<cmd>ZenMode<CR>", { desc = "zenmode" })
 	end,
 }

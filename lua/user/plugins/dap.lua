@@ -9,6 +9,7 @@ return {
 			"theHamsta/nvim-dap-virtual-text",
 			"jbyuki/one-small-step-for-vimkind",
 		},
+		event = "VimEnter",
 		config = function()
 			local debugging = {}
 
@@ -103,6 +104,7 @@ return {
 	-- Mason configuration for dap
 	{
 		"jayp0521/mason-nvim-dap.nvim",
+		event = "VimEnter",
 		config = function()
 			require("mason-nvim-dap").setup({
 				automatic_installation = true,

@@ -1,5 +1,6 @@
 return {
 	"willothy/flatten.nvim",
+	event = "VimEnter",
 	opts = function()
 		---@type Terminal?
 		local saved_terminal
