@@ -46,7 +46,7 @@ return {
 		)
 		vim.keymap.set(
 			"n",
-			"?",
+			"K",
 			"<cmd>Lspsaga hover_doc<cr>",
 			{ silent = true, noremap = true, desc = "Hover Documentation" }
 		)
