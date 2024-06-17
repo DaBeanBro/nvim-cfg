@@ -101,6 +101,7 @@ return {
 							hint = { enable = true, arrayIndex = "Disable" },
 							workspace = { checkThirdParty = false },
 							telemetry = { enable = false },
+							filetypes = "lua",
 						},
 					})
 
