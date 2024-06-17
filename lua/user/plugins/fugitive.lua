@@ -1,10 +1,9 @@
 return {
-  {
-    'https://github.com/tpope/vim-fugitive',
-    enabled = true,
-    lazy = true,
-    cmd = {
-      'Git',
-    },
-  },
+	"https://github.com/tpope/vim-fugitive",
+	event = "VimEnter",
+	enabled = true,
+	lazy = true,
+	cmd = {
+		"Git",
+	},
 }

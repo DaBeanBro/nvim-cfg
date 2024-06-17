@@ -1,4 +1,5 @@
 return {
-  "sainnhe/gruvbox-material",
-  priority = 1000,
+	"sainnhe/gruvbox-material",
+	event = "VimEnter",
+	priority = 1000,
 }
