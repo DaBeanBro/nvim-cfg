@@ -2,10 +2,11 @@ return {
 	"zbirenbaum/copilot.lua",
 	cmd = "Copilot",
 	event = {
-		-- "InsertEnter",
+		"InsertEnter",
 		"BufEnter",
 		"BufRead",
 	},
+	enabled = false,
 	config = function()
 		require("copilot").setup({
 			panel = {
