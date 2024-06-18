@@ -34,13 +34,13 @@ return {
 		)
 		vim.keymap.set(
 			"n",
-			"M",
+			"m",
 			"<cmd>Lspsaga code_action<cr>",
 			{ silent = true, noremap = true, desc = "Code Action" }
 		)
 		vim.keymap.set(
 			"x",
-			"M",
+			"m",
 			":<c-u>Lspsaga range_code_action<cr>",
 			{ silent = true, noremap = true, desc = "Range Code Action" }
 		)
