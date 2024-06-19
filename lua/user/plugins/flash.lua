@@ -3,7 +3,30 @@ return {
 	event = "VeryLazy",
 	---@type Flash.Config
 	opts = {
-		config = nil,
+		labels = "asdfghjkl;vnryrueiwo",
+		search = {
+			multi_window = false,
+		},
+		label = {
+			uppercase = false,
+		},
+		modes = {
+			search = {
+				enabled = true,
+			},
+			char = {
+				enabled = true,
+				highlight = { backdrop = false },
+				multi_line = false,
+			},
+			remote = {
+				highlight = { backdrop = false },
+				remote_op = { restore = true, motion = true },
+			},
+		},
+		prompt = {
+			enabled = false,
+		},
 	},
   -- stylua: ignore
   keys = {

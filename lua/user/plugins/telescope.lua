@@ -114,7 +114,7 @@ return {
 		vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "List Buffers" })
 		vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Help Tags" })
 		vim.keymap.set("n", "<leader>ff", builtin.commands, { desc = "Commands" })
-		vim.keymap.set("n", "<leader>gf", builtin.git_commits, { desc = "Git Commits" })
+		-- vim.keymap.set("n", "<leader>gf", builtin.git_commits, { desc = "Git Commits" })
 
 		-- vim.keymap.set("n", "<leader>sf", ":Telescope possession list<CR>", { desc = "List Sessions" })
 	end,
