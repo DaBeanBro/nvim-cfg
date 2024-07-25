@@ -1,0 +1,29 @@
+# Neovim specific
+*.swp
+*.swo
+*.swn
+.netrwhist
+.viminfo
+.vim/
+
+# Plugin manager directories
+plugged/
+pack/*/start/
+
+# Undo files and session
+undo/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Tags
+tags
+
+# Backup files
+backup*/
+
+# Other
+noice.log
+lazy_lock.json
+/lua/user/plugins/scratch/
