@@ -10,6 +10,7 @@ return {
 		{ 'nvim-telescope/telescope-fzf-native.nvim',  build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' },
 		{ "nvim-telescope/telescope-frecency.nvim" },
 		{ "nvim-telescope/telescope-dap.nvim" },
+		{ "nvim-telescope/telescope-project.nvim" },
 		{ "JoseConseco/telescope_sessions_picker.nvim" },
 		{ "Zane-/cder.nvim" },
 		{ "rcarriga/nvim-notify" },
@@ -22,6 +23,7 @@ return {
 		local telescope = require("telescope")
 		local actions = require("telescope.actions")
 		local builtin = require("telescope.builtin")
+		local extensions = require('telescope').extensions
 		local fd_ignore_file = vim.fn.expand("$HOME/") .. ".rgignore"
 		local cder_dir_cmd = {
 			"fd",
@@ -168,5 +170,7 @@ return {
 		vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 		vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 		vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+		vim.keymap.set('n', '<leader>fs', extensions.sessions_picker.sessions_picker, {})
+		vim.keymap.set('n', '<leader>fz', extensions.zoxide.list, {})
 	end
 }
