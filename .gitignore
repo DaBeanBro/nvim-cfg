@@ -27,6 +27,7 @@ backup*/
 # Other
 noice.log
 lazy-lock.json
+/lua/core/mason
 
 # Ignore Python bytecode
 *.pyc
