@@ -9,6 +9,7 @@
 # Plugin manager directories
 plugged/
 pack/*/start/
+site/
 
 # Undo files and session
 undo/
@@ -25,5 +26,19 @@ backup*/
 
 # Other
 noice.log
-lazy_lock.json
-/lua/user/plugins/scratch/
+lazy-lock.json
+
+# Ignore Python bytecode
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore Node.js modules
+node_modules/
+
+# Ignore build directories
+build/
+dist/
+
+# Ignore log files
+*.log

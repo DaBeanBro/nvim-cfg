@@ -1,4 +1,4 @@
-local colors = "solarized-osaka"
+local colors = "catppuccin-mocha"
 local background = "dark"
 
 local load_colors = function()
@@ -18,7 +18,8 @@ local load_core = function()
 	require("core.lazy")
 
 	load_colors()
-	vim.api.nvim_set_hl(0, "Cursor", { fg = "#FF0000", bg = "#bb0000" })
+	vim.api.nvim_set_hl(0, "Cursor", { fg = "#77DD77", bg = "#66DD66" })
+	vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#99ff99', bg = '' })
 	vim.opt.guicursor = "a:block-Cursor"
 end
 
