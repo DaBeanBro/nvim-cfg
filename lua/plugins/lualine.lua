@@ -1,50 +1,134 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = { 'nvim-tree/nvim-web-devicons', 'arkav/lualine-lsp-progress', 'letieu/harpoon-lualine' },
-	config = function()
-		local lualine = require("lualine")
-		local lazy_status = require("lazy.status") -- to configure lazy pending updates count
+	event = "VeryLazy",
+	init = function()
+		-- disable until lualine loads
+		vim.opt.laststatus = 0
+	end,
+	opts = function()
+		local icons = require("icons")
 
-		local function current_lsp()
-			local lsp_info = {}
-
-			for _, client in ipairs(vim.lsp.get_clients { bufnr = 0 }) do
-				table.insert(lsp_info, client.name)
+		local function fg(name)
+			return function()
+				---@type {foreground?:number}?
+				local hl = vim.api.nvim_get_hl_by_name(name, true)
+				return hl and hl.foreground and { fg = string.format("#%06x", hl.foreground) }
 			end
-
-			return table.concat(lsp_info, '|')
 		end
 
-		lualine.setup {
+		local trouble = require("trouble")
+		local symbols = trouble.statusline({
+			mode = "lsp_document_symbols",
+			groups = {},
+			title = false,
+			filter = { range = true },
+			format = "{kind_icon}{symbol.name:Normal}",
+			-- The following line is needed to fix the background color
+			-- Set it to the lualine section you want to use
+			hl_group = "lualine_c_normal",
+		})
+
+		return {
+			options = {
+				theme = "auto",
+				globalstatus = true,
+				disabled_filetypes = { statusline = { "dashboard", "lazy", "alpha" } },
+				refresh = {
+					statusline = 500,
+					tabline = 1000,
+					winbar = 1000,
+				},
+			},
 			sections = {
-				lualine_a = { 'mode' },
+				lualine_a = { "mode" },
 				lualine_b = {
-					'branch',
-					'diff',
-					{ 'diagnostics', symbols = { error = 'E', warn = 'W', info = 'I', hint = 'H' } },
+					"branch",
+					{
+						"diff",
+						symbols = {
+							added = icons.get("git").Added,
+							modified = icons.get("git").Modified,
+							removed = icons.get("git").Removed,
+						},
+					},
 				},
 				lualine_c = {
-					{ 'harpoon2', no_harpoon = '' },
-					{ 'filename', path = 1 },
-					-- {
-					--   require("nvim-possession").status,
-					--   cond = function()
-					--     return require("nvim-possession").status() ~= nil
-					--   end,
-					-- },
+					{
+						"diagnostics",
+						symbols = {
+							error = icons.get("diagnostics").Error,
+							warn = icons.get("diagnostics").Warn,
+							info = icons.get("diagnostics").Info,
+							hint = icons.get("diagnostics").Hint,
+						},
+					},
+					{
+						"filetype",
+						icon_only = false,
+						separator = "",
+						padding = {
+							left = 1,
+							right = 0,
+						},
+					},
+					{
+						"filename",
+						path = 1,
+						fmt = function(path)
+							return table.concat(
+								{ vim.fs.basename(vim.fs.dirname(path)), vim.fs.basename(path) },
+								package.config:sub(1, 1)
+							)
+						end,
+						symbols = {
+							modified = "  ",
+							readonly = "",
+							unnamed = "",
+						},
+					},
+					{
+						symbols.get,
+						cond = symbols.has,
+					},
 				},
 				lualine_x = {
-					current_lsp,
-					'lsp_progress',
-					'encoding',
-					'fileformat',
-					'filetype',
-					-- lazy_status.updates,
-					-- cond = lazy_status.has_updates,
+					{
+						function()
+							return require("noice").api.status.command.get()
+						end,
+						cond = function()
+							return package.loaded["noice"] and require("noice").api.status.command.has()
+						end,
+						color = fg("Statement"),
+					},
+					{
+						function()
+							return eequire("noice").api.status.mode.get()
+						end,
+						cond = function()
+							return package.loaded["noice"] and require("noice").api.status.mode.has()
+						end,
+						color = fg("Constant"),
+					},
+					{ require("lazy.status").updates, cond = require("lazy.status").has_updates, color = fg("Special") },
 				},
-				lualine_y = { 'progress' },
-				lualine_z = { 'location', 'selectioncount' },
+				lualine_y = {
+					{
+						"fileformat",
+						icons_enabled = true,
+					},
+					{ "progress", separator = " ",                  padding = { left = 1, right = 0 } },
+					{ "location", padding = { left = 0, right = 1 } },
+				},
+				lualine_z = {
+					{ "searchcount" },
+					{ "selectioncount" },
+					function()
+						return os.date("%R")
+					end,
+				},
 			},
+			extensions = { "nvim-dap-ui", "quickfix" },
 		}
 	end,
 }

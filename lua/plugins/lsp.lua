@@ -2,18 +2,19 @@ return {
 	"williamboman/mason.nvim",
 	event = "User FilePost",
 	dependencies = {
-		'VonHeikemen/lsp-zero.nvim', branch = 'v3.x',
+		'VonHeikemen/lsp-zero.nvim',
+		branch = 'v3.x',
 		dependencies = {
 			"neovim/nvim-lspconfig",
 			enabled = true,
 			dependencies = {
-				"williamboman/mason.nvim", -- For installing LSP servers
+				"williamboman/mason.nvim",           -- For installing LSP servers
 				"williamboman/mason-lspconfig.nvim", -- Integration with nvim-lspconfig
-				"b0o/schemastore.nvim", -- YAML/JSON schemas
+				"b0o/schemastore.nvim",              -- YAML/JSON schemas
 				"jose-elias-alvarez/typescript.nvim", -- TypeScript utilities
 				"davidosomething/format-ts-errors.nvim", -- Prettier TypeScript errors
-				"hrsh7th/cmp-nvim-lsp", -- Improved LSP capabilities
-				"lvimuser/lsp-inlayhints.nvim", -- Inlay hints
+				"hrsh7th/cmp-nvim-lsp",              -- Improved LSP capabilities
+				"lvimuser/lsp-inlayhints.nvim",      -- Inlay hints
 				"onsails/lspkind.nvim",
 				"nvimdev/lspsaga.nvim",
 				"nvim-lua/lsp-status.nvim",
@@ -30,13 +31,14 @@ return {
 		},
 		event = "VeryLazy",
 		config = function()
+			local lspconfig = require("lspconfig")
 			local mason = require("mason")
 			local path = require "mason-core.path"
 			local mason_lspconfig = require("mason-lspconfig")
 			local lsp_zero = require('lsp-zero')
 
 			lsp_zero.on_attach(function(client, bufnr)
-				lsp_zero.default_keymaps({buffer = bufnr})
+				lsp_zero.default_keymaps({ buffer = bufnr })
 			end)
 
 			lsp_zero.set_sign_icons({
@@ -44,6 +46,12 @@ return {
 				warn = '▲',
 				hint = '⚑',
 				info = '»'
+			})
+
+			lspconfig.sourcekit.setup({
+				cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" },
+				filetypes = { "swift", "c", "cpp", "objective-c", "objective-cpp" },
+				root_dir = lspconfig.util.root_pattern("Package.swift", ".git"),
 			})
 
 
@@ -116,7 +124,7 @@ return {
 							end
 						end
 
-						require('lspconfig')[server_name].setup({})
+						lspconfig[server_name].setup({})
 					end,
 				}
 			})
